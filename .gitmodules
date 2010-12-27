@@ -1,0 +1,3 @@
+[submodule "vendor/libxmljs"]
+	path = vendor/libxmljs
+	url = git://github.com/polotek/libxmljs.git

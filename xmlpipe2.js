@@ -1,5 +1,5 @@
 var couch = require('./node-couch').CouchDB,
-    libxml = require('./libxmljs'),
+    libxml = require('./vendor/libxmljs/libxmljs'),
     settings = require('./settings'),
     sys = require('sys');
 

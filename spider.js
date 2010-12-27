@@ -23,7 +23,7 @@ function get_content_type(headers) {
     return headers['content-type'].split(';')[0];
 }
 
-var libxml = require("./libxmljs"),
+var libxml = require("./vendor/libxmljs/libxmljs"),
     http = require("http"),
     url = require("url"),
     settings = require("./settings"),
