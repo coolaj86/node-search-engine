@@ -1,75 +1,81 @@
-var couch = require('./node-couch').CouchDB,
-    libxml = require('./libxmljs'),
-    settings = require('./settings'),
-    sys = require('sys');
+/*jslint onevar: true, undef: true, eqeqeq: true, plusplus: true, bitwise: true, regexp: true, newcap: true, immed: true, strict: true */
+// nomen: false -- allow _
+(function () {
+    "use strict";
 
-var db = couch.db(settings.couchbase, settings.couchhost);
+    var couch = require('./node-couch').CouchDB,
+      libxml = require('./libxmljs'),
+      settings = require('./settings'),
+      sys = require('sys'),
+      db = couch.db(settings.couchbase, settings.couchhost),
+      doc_id = 1;
 
-var doc_id = 1;
-var process_document = function (docs) {
-    if (docs.length > 0) {
-        doc_id++;
-        var document = docs.pop();
+    function process_document(docs) {
 
-        db.openDoc(document.id,{
-            'success': function(page) {
-                sys.puts('<sphinx:document id="' + parseInt(page._id) + '">');
+      if (docs.length > 0) {
+          doc_id += 1;
+          var document = docs.pop();
 
-                sys.puts('<subject>');
+          db.openDoc(document.id,{
+              'success': function(page) {
+                  sys.puts('<sphinx:document id="' + parseInt(page._id, 10) + '">');
 
-                if (page.title) {
-                    sys.puts(page.title.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                } else {
-                    sys.puts('No title');
-                }
+                  sys.puts('<subject>');
 
-                sys.puts('</subject>');
+                  if (page.title) {
+                      sys.puts(page.title.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                  } else {
+                      sys.puts('No title');
+                  }
 
-                sys.puts('<content>');
+                  sys.puts('</subject>');
 
-                if (page.text) {
-                    sys.puts(page.text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-                }
+                  sys.puts('<content>');
 
-                sys.puts('</content>');
+                  if (page.text) {
+                      sys.puts(page.text.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+                  }
 
-                if (page.url) {
-                    sys.puts('<url>' + page.url + '</url>');
-                } else {
-                    sys.puts('<url />');
-                }
+                  sys.puts('</content>');
 
-                sys.puts('</sphinx:document>');
+                  if (page.url) {
+                      sys.puts('<url>' + page.url + '</url>');
+                  } else {
+                      sys.puts('<url />');
+                  }
 
-                process_document(docs);
-            },
-            'error':function (e) {
-                sys.puts('Error getting doc: ' + sys.inspect(e));
-            }
-        });
+                  sys.puts('</sphinx:document>');
 
-    } else {
-        sys.puts('</sphinx:docset>');
+                  process_document(docs);
+              },
+              'error':function (e) {
+                  sys.puts('Error getting doc: ' + sys.inspect(e));
+              }
+          });
+
+      } else {
+          sys.puts('</sphinx:docset>');
+      }
     }
-};
 
-db.allDocs({
-    'success': function(docs) {
+    db.allDocs({
+        'success': function(docs) {
 
-        sys.puts('<' + '?xml version="1.0" encoding="utf-8"?>');
-        sys.puts('<sphinx:docset>');
-        sys.puts('<sphinx:schema>');
+            sys.puts('<' + '?xml version="1.0" encoding="utf-8"?>');
+            sys.puts('<sphinx:docset>');
+            sys.puts('<sphinx:schema>');
 
-        sys.puts(' <sphinx:field name="subject" />');
-        sys.puts(' <sphinx:field name="content" />');
-        sys.puts(' <sphinx:field name="url" />');
+            sys.puts(' <sphinx:field name="subject" />');
+            sys.puts(' <sphinx:field name="content" />');
+            sys.puts(' <sphinx:field name="url" />');
 
-        sys.puts('</sphinx:schema>');
+            sys.puts('</sphinx:schema>');
 
-        process_document(docs.rows);
+            process_document(docs.rows);
 
-    },
-    'error': function(errorResponse) {
-        sys.puts('Error getting all docs: ' + JSON.stringify(errorResponse.reason));
-    }
-});
+        },
+        'error': function(errorResponse) {
+            sys.puts('Error getting all docs: ' + JSON.stringify(errorResponse.reason));
+        }
+    });
+}());
