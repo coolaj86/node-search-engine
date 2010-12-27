@@ -27,7 +27,7 @@ var libxml = require("./vendor/libxmljs/libxmljs"),
     http = require("http"),
     url = require("url"),
     settings = require("./settings"),
-    couch = require("./node-couch").CouchDB,
+    couch = require("./vendor/node-couch/lib/index").CouchDB,
     sys = require("sys");
 
 var target_site = http.createClient(80, settings.targethost);

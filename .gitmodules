@@ -1,3 +1,6 @@
 [submodule "vendor/libxmljs"]
 	path = vendor/libxmljs
 	url = git://github.com/polotek/libxmljs.git
+[submodule "vendor/node-couch"]
+	path = vendor/node-couch
+	url = git://github.com/sixtus/node-couch.git

@@ -1,4 +1,4 @@
-var couch = require('./node-couch').CouchDB,
+var couch = require('./vendor/node-couch/lib/index').CouchDB,
     libxml = require('./vendor/libxmljs/libxmljs'),
     settings = require('./settings'),
     sys = require('sys');
